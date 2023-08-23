@@ -1,11 +1,18 @@
-import os
-import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy import create_engine
 from eralchemy2 import render_er
 
 Base = declarative_base()
+
+user_intereses = Table(
+    'user_intereses',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True),
+    Column('profile_id', Integer,  ForeignKey('profile.id'), primary_key=True),
+    Column('planet_id', Integer, ForeignKey('planet.id'), primary_key=True),
+    Column('character_id', Integer, ForeignKey('character.id'), primary_key=True),
+)
 
 class User(Base):
     __tablename__ = 'user'
@@ -16,7 +23,6 @@ class User(Base):
     user_lastname = Column(String(120), nullable=False, unique=True)
     email = Column(String(120), nullable=False, unique=True)
     profile = relationship('Profile', uselist=False, backref="user")
-    intereses = relationship('Intereses', uselist=False, backref="user")
     follower = relationship('Follower', uselist=False, backref="user")
     post = relationship('Post', uselist=False, backref="user")
     comment = relationship('Comment', uselist=False, backref="user")
@@ -36,17 +42,7 @@ class Profile(Base):
     profile_threads = Column(String(120))
     profile_twitter = Column(String(120))
     profile_linkedin = Column(String(120))
-    intereses = relationship('Intereses', uselist=False, backref="profile")
 
-class Intereses(Base):
-    __tablename__ = 'intereses'
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
-    profile_id = Column(Integer, ForeignKey('profile.id'), primary_key=True)
-    planet = Column(String)
-    character = Column(String)
-    planet = relationship('Planet', uselist=False, backref="intereses")
-    character = relationship('Character', uselist=False, backref="intereses")
 
 class Planet(Base):
     __tablename__ = 'planet'
@@ -63,6 +59,16 @@ class Character(Base):
     character_last_name = Column(String(120), nullable=False, unique=True)
     character_race = Column(String(120), nullable=False, unique=True)
     character_occupation = Column(String(120), nullable=False, unique=True)
+
+""" class Intereses(Base):
+    __tablename__ = 'intereses'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    profile_id = Column(Integer, ForeignKey('profile.id'), primary_key=True)
+    planet = Column(String)
+    character = Column(String)
+    planet = relationship('Planet', uselist=False, backref="intereses")
+    character = relationship('Character', uselist=False, backref="intereses") """
 
 class Post(Base):
     __tablename__ = 'post'
